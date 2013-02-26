@@ -2,14 +2,14 @@
     var d = document;
     var c = {
         COCOS2D_DEBUG:2, // 0 - off, 1 - basic, 2 - full
-        box2d:false,
+        box2d:true,
         chipmunk:false,
         showFPS:true,
         frameRate:60,
         loadExtension:false,
         tag:'gameCanvas',
         engineDir:'lib/cocos2d/',
-        appFiles:['script/MyFirstApp.js']
+        appFiles:['script/PhysicsLayer.js']
     };
     window.addEventListener('DOMContentLoaded', function (){
         //first load engine file if specified

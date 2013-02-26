@@ -1,5 +1,6 @@
 var cocos2dApp = cc.Application.extend({
     config:document['ccConfig'],
+    
     ctor:function (scene) {
         this._super();
         this.startScene = scene;
@@ -17,6 +18,7 @@ var cocos2dApp = cc.Application.extend({
                                         {type:"sound", src:"resources/calltoarms"}]);
           
     },
+    
     applicationDidFinishLaunching:function () {
         // initialize director
         var director = cc.Director.getInstance();
@@ -37,4 +39,4 @@ var cocos2dApp = cc.Application.extend({
         return true;
     }
 });
-var myApp = new cocos2dApp(MyFirstAppScene);
+var myApp = new cocos2dApp(PhysicsTestScene);

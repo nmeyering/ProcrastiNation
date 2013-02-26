@@ -16,15 +16,15 @@ var MyFirstApp = cc.Layer.extend({
         
         helloLabel.schedule(function ()
         {
-            this.setRotation(rotationAmount++);
-            if (rotationAmount > 360) {
-                rotationAmount = 0;
-            }
-            this.setScale(scale);
-            scale += 0.05;
-            if (scale > 10) {
-                scale = 1;
-            }
+            // this.setRotation(rotationAmount++);
+            // if (rotationAmount > 360) {
+                // rotationAmount = 0;
+            // }
+            // this.setScale(scale);
+            // scale += 0.05;
+            // if (scale > 10) {
+                // scale = 1;
+            // }
         });
         
         layer1.addChild(helloLabel);
