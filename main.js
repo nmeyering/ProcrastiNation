@@ -33,6 +33,7 @@ var cocos2dApp = cc.Application.extend({
 
         // run
         director.runWithScene(new this.startScene());
+  
 
         return true;
     }

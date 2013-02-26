@@ -9,7 +9,7 @@
         loadExtension:false,
         tag:'gameCanvas',
         engineDir:'lib/cocos2d/',
-        appFiles:['script/MyFirstApp.js']
+        appFiles:['script/MyFirstApp.js', 'script/Utils.js']
     };
     window.addEventListener('DOMContentLoaded', function (){
         //first load engine file if specified
@@ -26,7 +26,7 @@
         }
         /*********Delete this section if you have packed all files into one*******/
 
-            //s.src = 'Packed_Release_File.js'; //IMPORTANT: Un-comment this line if you have packed all files into one
+        //s.src = 'Packed_Release_File.js'; //IMPORTANT: Un-comment this line if you have packed all files into one
 
         document.ccConfig = c;
         s.id = 'cocos2d-html5';
