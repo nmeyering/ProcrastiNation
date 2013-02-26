@@ -8,7 +8,7 @@ var MyFirstApp = cc.Layer.extend({
         var layer1 = cc.LayerColor.create(new cc.Color4B(255, 255, 0, 255), 600, 600);
         layer1.setAnchorPoint(new cc.Point(0.5, 0.5));
         
-        var helloLabel = cc.LabelTTF.create("Hello world", "Arial", 30);
+        var helloLabel = cc.LabelTTF.create("Hello Waynes World", "Arial", 30);
         helloLabel.setPosition(new cc.Point(s.width/2, s.height/2));
         helloLabel.setColor(new cc.Color3B(255, 0, 0));
         var rotationAmount = 0;
