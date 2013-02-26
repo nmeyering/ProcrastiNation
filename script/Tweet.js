@@ -3,7 +3,7 @@
 // holds all data for a Tweet
 //
 
-/*
+
 
 Tweet = function(){
 	 'use strict';
@@ -13,6 +13,6 @@ Tweet = function(){
 	this.retweetCount = 0;
 	this.favoriteCount = 0;
 }
-*/
+
 
 

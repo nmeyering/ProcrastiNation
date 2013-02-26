@@ -9,7 +9,7 @@
         loadExtension:false,
         tag:'gameCanvas',
         engineDir:'lib/cocos2d/',
-        appFiles:['script/MyFirstApp.js', 'script/Utils.js']
+        appFiles:['script/MyFirstApp.js', 'script/Utils.js', 'script/Tweet.js']
     };
     window.addEventListener('DOMContentLoaded', function (){
         //first load engine file if specified

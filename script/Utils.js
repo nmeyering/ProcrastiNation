@@ -27,7 +27,6 @@ var loadStringFromFile = function (filename) {
     }
     
     if (xmlHttp) {
-        //xmlHttp.open('GET', 'shader/Pos4_Normal4_VS.glsl',false);
         xmlHttp.open('GET', filename, false); //synchron
         xmlHttp.overrideMimeType('text/plain; charset=x-user-defined');
         xmlHttp.send(null);
