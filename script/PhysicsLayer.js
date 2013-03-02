@@ -60,7 +60,7 @@ PhysicsLayer = cc.Layer.extend({
         var mgr = cc.SpriteBatchNode.create("resources/block.png", 150);
         this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
-        this.addNewSpriteWithCoords(cc.p(screenSize.width / 2, screenSize.height / 2));
+        // this.addNewSpriteWithCoords(cc.p(screenSize.width / 2, screenSize.height / 2));
 
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
