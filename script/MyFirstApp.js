@@ -142,7 +142,7 @@ var MyFirstAppScene = cc.Scene.extend({
 		this.addChild(this.myLayer);
 		
 		var testSearch = "cebit";
-		var tweetManager = new TweetManager("script/php/httpRequest.php?query=" + testSearch);
+		var tweetManager = new TweetManager("script/php/httpRequest.php?query=", testSearch);
 	}
 });
 

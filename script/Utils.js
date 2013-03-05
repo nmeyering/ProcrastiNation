@@ -1,4 +1,5 @@
 var xmlHttp = null;
+var tweetArray = null;
 /*
 * Uses a XMLHttpRequest to retreive the answer
 * of a given URL
@@ -38,8 +39,10 @@ var loadStringFromFile = function (filename) {
     return result;
 };
 
-TweetManager = function(filename){
+TweetManager = function(baseUrl, query){
 	'use strict';
+	
+	var filename = baseUrl + query;
 		
 	this.queryResult;
 	
@@ -66,13 +69,35 @@ TweetManager = function(filename){
     	console.log("Started loading Tweets...")
         xmlHttp.open('GET', filename, true); //asynchron
         xmlHttp.overrideMimeType('text/plain; charset=x-user-defined');
+        
+        // ready function
         xmlHttp.onreadystatechange = function () {
 	        if (xmlHttp.readyState == 4) {
 	        	this.queryResult = JSON.parse(xmlHttp.responseText);
-	            console.log("Tweets loaded and parsed! :)")
+	        	
+    			tweetArray = new Array(this.queryResult.results.length);
+		
+				for(var i=0; i<this.queryResult.results.length; i++){
+					var newTweet = new Tweet;
+					newTweet.author = this.queryResult.results[i].from_user_name;
+					newTweet.content = this.queryResult.results[i].text;
+					
+					if(this.queryResult.results[i].metadata.recent_retweets != undefined)
+						newTweet.retweetCount = this.queryResult.results[i].metadata.recent_retweets;
+					else
+						newTweet.retweetCount = 0;						
+					
+					tweetArray[i] = newTweet;
+					
+					// Testing
+					newTweet.evaluatePoints(query);
+					newTweet.compareTo(tweetArray[0]); 		
+				}	
+			        	
+	            console.log(this.queryResult.results.length + " Tweets loaded and parsed! :)")
 	            var director = cc.Director.getInstance();
 	            if(director.getRunningScene().myLayer != undefined)
-	            	director.getRunningScene().myLayer.addNewTextLabel("Test!");
+	            	director.getRunningScene().myLayer.addNewTextLabel(tweetArray[1].author);
             	else{
             		console.log("undefined");
             	}
