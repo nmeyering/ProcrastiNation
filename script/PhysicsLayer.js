@@ -35,6 +35,8 @@ PhysicsLayer = cc.Layer.extend({
         
         var bodyDef = new b2BodyDef;
         
+        console.log('World Count 1: ' + this.world.GetBodyCount());
+        
         // create ground
         bodyDef.type = b2Body.b2_staticBody;
         fixDef.shape = new b2PolygonShape;
@@ -56,6 +58,7 @@ PhysicsLayer = cc.Layer.extend({
         bodyDef.position.Set(33.8, 13);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
         
+        console.log('World Count2: ' + this.world.GetBodyCount());
         
         //Set up sprite
 
@@ -64,16 +67,22 @@ PhysicsLayer = cc.Layer.extend({
         var bigSpriteManager = cc.SpriteBatchNode.create("resources/big_tweet.png", 150);
         this.addChild(bigSpriteManager, 0, BIG_SPRITE_MANAGER);
 
-        this.addNewSpriteWithCoords(cc.p(screenSize.width / 4, screenSize.height / 2));
-        this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));
-        this.addNewSpriteWithCoords(cc.p( 3 * screenSize.width / 4, screenSize.height / 2));
-        this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));        
+		for (var i = 0; i < 1; i++) {
+	        this.addNewSpriteWithCoords(cc.p(screenSize.width / 4, screenSize.height / 2));			
+		}
+
+        // this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));
+        // this.addNewSpriteWithCoords(cc.p( 3 * screenSize.width / 4, screenSize.height / 2));
+        // this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));  
+              
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
         label.setColor(cc.c3b(0, 0, 255));
         label.setPosition(cc.p(screenSize.width / 2, screenSize.height - 50));
 
         this.scheduleUpdate();
+        
+        console.log('World Count3: ' + this.world.GetBodyCount());
     },
 
     addNewSpriteWithCoords:function (p, big) {
@@ -120,9 +129,49 @@ PhysicsLayer = cc.Layer.extend({
         fixtureDef.shape = dynamicBox;
         fixtureDef.density = 1.0;
         fixtureDef.friction = 0.3;
+        fixtureDef.restitution = 0.0;
         body.CreateFixture(fixtureDef);
 
     },
+    
+    explosion : function (location) {
+    	var b2Vec2 = Box2D.Common.Math.b2Vec2,
+            b2BodyDef = Box2D.Dynamics.b2BodyDef,
+            b2Body = Box2D.Dynamics.b2Body;
+    	
+    	// Boolean doSuction = new Boolean(true);
+    	
+    	for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
+    		if (b.GetType() !== b2Body.b2_staticBody) {
+    			var touchPosition = new b2Vec2(location.x / PTM_RATIO, location.y / PTM_RATIO);
+    			var bodyPosition = new b2Vec2(b.GetPosition().x, b.GetPosition().y);
+    			
+    			bodyPosition.Subtract(touchPosition);
+    			distance = bodyPosition.Length();
+    			console.log('Distance: ' + distance);
+    			
+    			var maxDistance = 9;
+    			var maxForce = 40;
+    			
+    			var distance = -1;
+    			var strength = -1;
+    			var force = -1;
+    			var angle = -1;
+    			
+    			if (distance > maxDistance) {
+    				distance = maxDistance - 0.01;
+    			}
+    			
+    			strength = (maxDistance - distance) / maxDistance;
+    			force = strength * maxForce;
+    			angle = Math.atan2(bodyPosition.y - touchPosition.y, bodyPosition.x - touchPosition.x);
+    			
+    			var impulseVec = new b2Vec2(Math.cos(angle) * force, Math.sin(angle) * force);
+    			b.ApplyImpulse(impulseVec, b.GetPosition());
+    		}
+    	}
+    },
+    
     update:function (dt) {
         //It is recommended that a fixed time step is used with Box2D for stability
         //of the simulation, however, we are using a variable time step here.
@@ -153,16 +202,32 @@ PhysicsLayer = cc.Layer.extend({
         
         var newX = location.x / PTM_RATIO;
         var newY = location.y / PTM_RATIO; 
+        // var newX = location.x;
+        // var newY = location.y; 
         
         var b2Vec2 = Box2D.Common.Math.b2Vec2;
-        var touchPoint = b2Vec2(newX, newY);
-        
+        var	b2Transform = Box2D.Common.Math.b2Transform;
+         
+        var foundBody = null;
+        var foundSprite = null;
+        // console.log("World Body Length: " + this.world.GetBodyCount());
         for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
             for (var f = b.GetFixtureList(); f; f = f.GetNext()) {
-                if (f.TestPoint(touchPoint)) {
-                    console.log("say hello");
+    	        var touchPoint = new b2Vec2(newX, newY);
+        		// console.log('TouchPoint : ' + touchPoint.x);
+                if (f.TestPoint(touchPoint) === true) {
+                     console.log("say hello");
+                     foundBody = b;
+                     foundSprite = b.GetUserData();
                 }
             }            
+        }
+        
+        var batch = this.getChildByTag(BIG_SPRITE_MANAGER);
+        
+        if (foundBody !== null && foundSprite !== null) {
+        	this.world.DestroyBody(foundBody);
+        	batch.removeChild(foundSprite);
         }
     },
     
@@ -171,7 +236,8 @@ PhysicsLayer = cc.Layer.extend({
 //         
         // console.log(location);
         // this.addNewSpriteWithCoords(location);
-        this.checkCollisionAndDelete(location);
+        // this.checkCollisionAndDelete(location);
+        this.explosion(location);
     }
 });
 
