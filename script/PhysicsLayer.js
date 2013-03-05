@@ -1,5 +1,6 @@
 var PTM_RATIO = 32;
-var TAG_SPRITE_MANAGER = 1;
+var SMALL_SPRITE_MANAGER = 1;
+var BIG_SPRITE_MANAGER = 2;
 
 PhysicsLayer = cc.Layer.extend({
     
@@ -52,16 +53,21 @@ PhysicsLayer = cc.Layer.extend({
         bodyDef.position.Set(-1.8, 13);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
         // right
-        bodyDef.position.Set(26.8, 13);
+        bodyDef.position.Set(33.8, 13);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        
         
         //Set up sprite
 
-        var mgr = cc.SpriteBatchNode.create("resources/block.png", 150);
-        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
+        var smallSpriteManager = cc.SpriteBatchNode.create("resources/block.png", 150);
+        this.addChild(smallSpriteManager, 0, SMALL_SPRITE_MANAGER);
+        var bigSpriteManager = cc.SpriteBatchNode.create("resources/big_tweet.png", 150);
+        this.addChild(bigSpriteManager, 0, BIG_SPRITE_MANAGER);
 
-        // this.addNewSpriteWithCoords(cc.p(screenSize.width / 2, screenSize.height / 2));
-
+        this.addNewSpriteWithCoords(cc.p(screenSize.width / 4, screenSize.height / 2));
+        this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));
+        this.addNewSpriteWithCoords(cc.p( 3 * screenSize.width / 4, screenSize.height / 2));
+        this.addNewSpriteWithCoords(cc.p( 2 * screenSize.width / 4, screenSize.height / 2));        
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
         label.setColor(cc.c3b(0, 0, 255));
@@ -70,9 +76,9 @@ PhysicsLayer = cc.Layer.extend({
         this.scheduleUpdate();
     },
 
-    addNewSpriteWithCoords:function (p) {
+    addNewSpriteWithCoords:function (p, big) {
         //UXLog(L"Add sprite %0.2f x %02.f",p.x,p.y);
-        var batch = this.getChildByTag(TAG_SPRITE_MANAGER);
+        var batch = this.getChildByTag(BIG_SPRITE_MANAGER);
 
         //We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
         //just randomly picking one of the images
@@ -80,11 +86,10 @@ PhysicsLayer = cc.Layer.extend({
         var idy = (Math.random() > .5 ? 0 : 1);
         
         //get an image
-        
         var sprite = cc.Sprite.createWithTexture(batch.getTexture());
         batch.addChild(sprite);
 
-        sprite.setPosition(cc.p(p.x, p.y));
+        //sprite.setPosition(cc.p(p.x, p.y));
 
         // Define the dynamic body.
         //Set up a 1m squared box in the physics world
@@ -96,12 +101,19 @@ PhysicsLayer = cc.Layer.extend({
         var bodyDef = new b2BodyDef();
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(p.x / PTM_RATIO, p.y / PTM_RATIO);
+        
+        console.log("x pos: " + (p.x / PTM_RATIO) + " y pos: " + (p.y / PTM_RATIO));
+        
         bodyDef.userData = sprite;
         var body = this.world.CreateBody(bodyDef);
 
         // Define another box shape for our dynamic body.
         var dynamicBox = new b2PolygonShape();
-        dynamicBox.SetAsBox(0.5, 0.5);//These are mid points for our 1m box
+        // if (big) {
+            // dynamicBox.SetAsBox(0.5, 0.5);//These are mid points for our 1m box
+        // } else {
+            dynamicBox.SetAsBox(150 / PTM_RATIO, 40 / PTM_RATIO);
+        // } 
 
         // Define the dynamic body fixture.
         var fixtureDef = new b2FixtureDef();
@@ -136,11 +148,30 @@ PhysicsLayer = cc.Layer.extend({
         }
 
     },
+    
+    checkCollisionAndDelete: function (location) {
+        
+        var newX = location.x / PTM_RATIO;
+        var newY = location.y / PTM_RATIO; 
+        
+        var b2Vec2 = Box2D.Common.Math.b2Vec2;
+        var touchPoint = b2Vec2(newX, newY);
+        
+        for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
+            for (var f = b.GetFixtureList(); f; f = f.GetNext()) {
+                if (f.TestPoint(touchPoint)) {
+                    console.log("say hello");
+                }
+            }            
+        }
+    },
+    
     onMouseUp:function (event) {
         var location = event.getLocation();
-        
-        console.log(location);
-        this.addNewSpriteWithCoords(location);
+//         
+        // console.log(location);
+        // this.addNewSpriteWithCoords(location);
+        this.checkCollisionAndDelete(location);
     }
 });
 
@@ -148,7 +179,7 @@ PhysicsTestScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
         var layer = new PhysicsLayer();
-        layer.ctor();
+        // layer.ctor();
         this.addChild(layer);
     }
 });
