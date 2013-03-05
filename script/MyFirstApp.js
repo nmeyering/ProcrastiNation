@@ -1,8 +1,9 @@
 var MyFirstApp = cc.Layer.extend({
+	helloLabel : null,
 	init : function() {
 		this._super();
 
-
+		/*
 		// Hotfix: Dummy TweetArray with none-dynamic content
 		var JsonResult = {
 			"completed_in" : 0.004,
@@ -81,6 +82,11 @@ var MyFirstApp = cc.Layer.extend({
 			"since_id" : 0,
 			"since_id_str" : "0"
 		};
+		
+		var testSearch = "cebit";
+		var queryTest = loadStringFromFile("script/php/httpRequest.php?query=" + testSearch);
+		console.log(queryTest);
+		JsonResult = JSON.parse(queryTest);
 
 		var tweetArray = new Array(JsonResult.results.length);
 		
@@ -89,22 +95,21 @@ var MyFirstApp = cc.Layer.extend({
 			newTweet.author = JsonResult.results[i].from_user_name;
 			newTweet.content = JsonResult.results[i].text;
 			tweetArray[i] = newTweet;
-		};
-		
-		
+		}		
+		*/		
 
 		var s = cc.Director.getInstance().getWinSize();
 
 		var layer1 = cc.LayerColor.create(new cc.Color4B(255, 255, 0, 255), 600, 600);
 		layer1.setAnchorPoint(new cc.Point(0.5, 0.5));
 
-		var helloLabel = cc.LabelTTF.create(tweetArray[1].author, "Arial", 30);   // see here how to use tweetArray
-		helloLabel.setPosition(new cc.Point(s.width / 2, s.height / 2));
-		helloLabel.setColor(new cc.Color3B(255, 0, 0));
+		this.helloLabel = cc.LabelTTF.create("Test", "Arial", 30);   // see here how to use tweetArray
+		this.helloLabel.setPosition(new cc.Point(s.width / 2, s.height / 2));
+		this.helloLabel.setColor(new cc.Color3B(255, 0, 0));
 		var rotationAmount = 0;
 		var scale = 1;
 
-		helloLabel.schedule(function() {
+		this.helloLabel.schedule(function() {
 			this.setRotation(rotationAmount++);
 			if (rotationAmount > 360) {
 				rotationAmount = 0;
@@ -116,19 +121,29 @@ var MyFirstApp = cc.Layer.extend({
 			}
 		});
 
-		layer1.addChild(helloLabel);
+		layer1.addChild(this.helloLabel);
 		this.addChild(layer1);
 
 		return true;
+	},
+	
+	addNewTextLabel : function(text){
+		console.log(text);
+		this.helloLabel.setString(text);
 	}
 });
 
 var MyFirstAppScene = cc.Scene.extend({
+	myLayer : null,
 	onEnter : function() {
 		this._super();
-		var layer = new MyFirstApp();
-		layer.init();
-		this.addChild(layer);
+		this.myLayer = new MyFirstApp();
+		this.myLayer.init();
+		this.addChild(this.myLayer);
+		
+		var testSearch = "cebit";
+		var tweetManager = new TweetManager("script/php/httpRequest.php?query=" + testSearch);
 	}
 });
+
 
